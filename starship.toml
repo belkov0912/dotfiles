@@ -1,0 +1,67 @@
+# Starship 配置
+# 文档: https://starship.rs/config/
+
+# 提示符整体格式
+format = """
+$directory\
+$git_branch\
+$git_status\
+$python\
+$java\
+$golang\
+$nodejs\
+$conda\
+$cmd_duration\
+$line_break\
+$character"""
+
+# 提示符符号
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+
+# 目录：显示最后 3 层，截断时用 …
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+
+# Git 分支
+[git_branch]
+format = "on [$branch]($style) "
+style = "bold purple"
+
+# Git 状态
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "bold red"
+
+# 命令耗时：超过 3 秒才显示
+[cmd_duration]
+min_time = 3000
+format = "took [$duration]($style) "
+style = "bold yellow"
+
+# Python
+[python]
+format = '[${symbol}${version}( \($virtualenv\))]($style) '
+symbol = "🐍 "
+
+# Java
+[java]
+format = '[${symbol}${version}]($style) '
+symbol = "☕ "
+
+# Go
+[golang]
+format = '[${symbol}${version}]($style) '
+symbol = "🐹 "
+
+# Node.js
+[nodejs]
+format = '[${symbol}${version}]($style) '
+symbol = "⬢ "
+
+# Conda 环境
+[conda]
+format = '[$symbol$environment]($style) '
+ignore_base = true

@@ -1,0 +1,16 @@
+[plugin]
+prepend_previewers = [
+  { name = "*.md", run = "mdcat" },
+]
+
+[opener]
+markdown = [
+  { run = 'glow -p %s', desc = "Render Markdown", block = true },
+  { run = 'open %s', desc = "Open in system app", orphan = true, for = "macos" },
+  { run = '$EDITOR %s', desc = "Edit", block = true },
+]
+
+[open]
+prepend_rules = [
+  { url = "*.md", use = "markdown" },
+]
