@@ -13,6 +13,26 @@ links=(
     "starship.toml:starship.toml"
 )
 
+# ~/.claude 下的文件: 源(相对dotfiles/claude) -> 目标(相对~/.claude)
+claude_links=(
+    "settings.json:settings.json"
+    "agents:agents"
+)
+
+for entry in "${claude_links[@]}"; do
+    src="$DOTFILES_DIR/claude/${entry%%:*}"
+    dst="$HOME/.claude/${entry##*:}"
+
+    if [ -e "$dst" ] && [ ! -L "$dst" ]; then
+        backup="$dst.bak.$(date +%Y%m%d%H%M%S)"
+        echo "备份 $dst -> $backup"
+        mv "$dst" "$backup"
+    fi
+    mkdir -p "$(dirname "$dst")"
+    ln -sfn "$src" "$dst"
+    echo "链接 $dst -> $src"
+done
+
 for entry in "${links[@]}"; do
     src="$DOTFILES_DIR/${entry%%:*}"
     dst="$CONFIG_DIR/${entry##*:}"
