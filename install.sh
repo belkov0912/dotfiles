@@ -3,26 +3,23 @@ set -e
 
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 CONFIG_DIR="$HOME/.config"
+MODULES=(git ghostty btop yazi starship claude)
 
-# 需要链接的目录/文件: 源(相对dotfiles) -> 目标(相对~/.config)
-links=(
-    "ghostty:ghostty"
-    "btop:btop"
-    "yazi:yazi"
-    "git:git"
-    "starship.toml:starship.toml"
-)
+usage() {
+    echo "用法: $0 [模块名]"
+    echo ""
+    echo "不带参数则安装全部模块，指定模块名则只安装该模块。"
+    echo ""
+    echo "可用模块:"
+    for m in "${MODULES[@]}"; do echo "  $m"; done
+    exit 0
+}
 
-# ~/.claude 下的文件: 源(相对dotfiles/claude) -> 目标(相对~/.claude)
-claude_links=(
-    "settings.json:settings.json"
-    "agents:agents"
-)
+[ "$1" = "-h" ] || [ "$1" = "--help" ] && usage
+TARGET="$1"
 
-for entry in "${claude_links[@]}"; do
-    src="$DOTFILES_DIR/claude/${entry%%:*}"
-    dst="$HOME/.claude/${entry##*:}"
-
+link_file() {
+    local src="$1" dst="$2"
     if [ -e "$dst" ] && [ ! -L "$dst" ]; then
         backup="$dst.bak.$(date +%Y%m%d%H%M%S)"
         echo "备份 $dst -> $backup"
@@ -31,25 +28,42 @@ for entry in "${claude_links[@]}"; do
     mkdir -p "$(dirname "$dst")"
     ln -sfn "$src" "$dst"
     echo "链接 $dst -> $src"
-done
+}
 
-for entry in "${links[@]}"; do
-    src="$DOTFILES_DIR/${entry%%:*}"
-    dst="$CONFIG_DIR/${entry##*:}"
+should_install() {
+    [ -z "$TARGET" ] || [ "$1" = "$TARGET" ]
+}
 
-    # 如果目标已存在且不是符号链接，备份它
-    if [ -e "$dst" ] && [ ! -L "$dst" ]; then
-        backup="$dst.bak.$(date +%Y%m%d%H%M%S)"
-        echo "备份 $dst -> $backup"
-        mv "$dst" "$backup"
-    fi
+# git: ~/.gitconfig + ~/.config/git/ignore
+if should_install git; then
+    link_file "$DOTFILES_DIR/git/config" "$HOME/.gitconfig"
+    link_file "$DOTFILES_DIR/git" "$CONFIG_DIR/git"
+fi
 
-    # 确保父目录存在
-    mkdir -p "$(dirname "$dst")"
+# ghostty
+if should_install ghostty; then
+    link_file "$DOTFILES_DIR/ghostty" "$CONFIG_DIR/ghostty"
+fi
 
-    # 创建符号链接（-f 覆盖已有链接）
-    ln -sfn "$src" "$dst"
-    echo "链接 $dst -> $src"
-done
+# btop
+if should_install btop; then
+    link_file "$DOTFILES_DIR/btop" "$CONFIG_DIR/btop"
+fi
+
+# yazi
+if should_install yazi; then
+    link_file "$DOTFILES_DIR/yazi" "$CONFIG_DIR/yazi"
+fi
+
+# starship
+if should_install starship; then
+    link_file "$DOTFILES_DIR/starship.toml" "$CONFIG_DIR/starship.toml"
+fi
+
+# claude
+if should_install claude; then
+    link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
+    link_file "$DOTFILES_DIR/claude/agents" "$HOME/.claude/agents"
+fi
 
 echo "done!"

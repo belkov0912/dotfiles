@@ -1,0 +1,30 @@
+[safe]
+	directory = /opt/homebrew/Homebrew/Library/Taps/homebrew/homebrew-core
+	directory = /opt/homebrew/Homebrew/Library/Taps/homebrew/homebrew-cask
+	directory = /opt/homebrew/Homebrew/Library/Taps/homebrew/homebrew-services
+	directory = /opt/homebrew/Homebrew
+	directory = /opt/homebrew/Homebrew
+[user]
+	name = liujianan01
+	email = liujianan01@zhihu.com
+[url "git@git.in.zhihu.com:"]
+	insteadOf = https://git.in.zhihu.com/
+[credential]
+	helper = store
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status
+	unstage = reset HEAD --
+	last = log -1 HEAD
+	logl = log --oneline
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[core]
+    editor = vi
+[init]
+	defaultBranch = master
